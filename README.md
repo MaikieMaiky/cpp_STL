@@ -19,6 +19,7 @@ g++ string/01_string构造函数.cpp -o app
 cpp_STL/
 ├── deque/           # std::deque 示例 + README（本目录示例索引）
 ├── example/         # 综合案例 + README（本目录示例索引）
+├── queue/           # std::queue 示例 + README（本目录示例索引）
 ├── stack/           # std::stack 示例 + README（本目录示例索引）
 ├── string/          # std::string 示例 + README（本目录示例索引）
 ├── vector/          # std::vector 示例 + README（本目录示例索引）
@@ -32,6 +33,7 @@ cpp_STL/
 
 - [deque 示例索引](deque/README.md) — `std::deque`
 - [example 综合案例](example/README.md) — 综合案例
+- [queue 示例索引](queue/README.md) — `std::queue`
 - [stack 示例索引](stack/README.md) — `std::stack`
 - [string 示例索引](string/README.md) — `std::string`
 - [vector 示例索引](vector/README.md) — `std::vector`
