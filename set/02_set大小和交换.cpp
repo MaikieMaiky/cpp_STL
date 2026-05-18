@@ -2,7 +2,7 @@
 /**
  * size();      // 返回容器中元素的数目
  * empty();     // 判断容器是否为空
- * swap(set);    // 交换两个集合容器
+ * swap(set);   // 交换两个集合容器
  */
 #include <iostream>
 #include <set>
