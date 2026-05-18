@@ -21,6 +21,7 @@ cpp_STL/
 ├── example/         # 综合案例 + README（本目录示例索引）
 ├── list/            # std::list 示例 + README（本目录示例索引）
 ├── queue/           # std::queue 示例 + README（本目录示例索引）
+├── set/             # std::set 示例 + README（本目录示例索引）
 ├── stack/           # std::stack 示例 + README（本目录示例索引）
 ├── string/          # std::string 示例 + README（本目录示例索引）
 ├── vector/          # std::vector 示例 + README（本目录示例索引）
@@ -36,6 +37,7 @@ cpp_STL/
 - [example 综合案例](example/README.md) — 综合案例
 - [list 示例索引](list/README.md) — `std::list`
 - [queue 示例索引](queue/README.md) — `std::queue`
+- [set 示例索引](set/README.md) — `std::set`
 - [stack 示例索引](stack/README.md) — `std::stack`
 - [string 示例索引](string/README.md) — `std::string`
 - [vector 示例索引](vector/README.md) — `std::vector`
