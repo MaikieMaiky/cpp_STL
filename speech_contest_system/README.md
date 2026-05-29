@@ -1,370 +1,261 @@
 # 演讲比赛系统
+[返回主页](../README.md)
+
+
+本目录是一个 C++ 综合练习项目，用来模拟学校演讲比赛的完整流程。项目适合练习类、对象、STL 容器、排序、随机数、文件读写和菜单交互等内容。
+
+整体思路可以概括为：`speaker` 负责保存选手数据，`speech_manager` 负责组织比赛流程。
+
 ## 比赛规则
-- 学校举行一场演讲比赛，共有**12个人参加**。**比赛共两轮**，第一轮为淘汰赛，第二轮为决赛。
-- 每名选手都有对应的**编号**，如10001~10012
-- 比赛方式：**分组比赛，每组6个人**；
-- 第一轮分为两个小组，整体按照选手编号进行**抽签**后顺序演讲。
-- 十个评委分别给每名选手**打分**，去除最高分和最低分，求的平均分为本轮选手的成绩
-- 当小组演讲完后，淘汰组内排名最后的三个选手，**前三名晋级**，进入下一轮的比赛。
-- 第二轮为决赛，**前三名胜出**
-- 每轮比赛过后需要**显示晋级选手的信息**
+
+- 学校举办一场演讲比赛，共有 12 名选手参加。
+- 比赛分为两轮：第一轮为淘汰赛，第二轮为决赛。
+- 每名选手都有唯一编号，例如 `10001` 到 `10012`。
+- 第一轮分为 2 个小组，每组 6 人。每组前 3 名晋级。
+- 第二轮由 6 名晋级选手参赛，最终取前 3 名。
+- 每名选手由 10 位评委打分，去掉最高分和最低分后，计算平均分作为本轮成绩。
+- 每轮比赛结束后，需要显示晋级选手或最终前三名的信息。
 
 ## 程序功能
-- 开始演讲比赛：完成整届比赛的流程，每个比赛阶段需要给用户一个提示，用户按任意键后继续下一个阶段
-- 查看往届记录：查看之前比赛前三名结果，每次比赛都会记录到文件中，文件用.csv后缀名保存
-- 清空比赛记录：将文件中数据清空
-- 退出比赛程序：可以退出当前程序
 
+- 开始演讲比赛：完成抽签、评分、晋级、决赛和结果保存等流程。
+- 查看往届记录：读取 `speech.csv` 中保存的历史前三名结果。
+- 清空比赛记录：清空 `speech.csv` 中的历史数据。
+- 退出比赛程序：结束当前程序。
 
-下面这套设计非常适合你这个 C++ 小实验：既能练到**类、容器、排序、随机数、文件读写、菜单系统**，又不会复杂到变成“代码迷宫”。整体可以理解为：**选手数据交给 `Speaker`，比赛流程交给 `SpeechManager`**。🎤
+## 项目文件
 
----
+建议将项目拆分为以下文件：
 
-# 一、项目整体结构
-
-建议分成这几个文件：
-
-```cpp
+```text
 main.cpp
 speaker.h
-speechManager.h
-speechManager.cpp
+speech_manager.h
+speech_manager.cpp
 speech.csv
 ```
 
-其中：
+| 文件 | 作用 |
+|------|------|
+| `main.cpp` | 程序入口，显示菜单并接收用户选择 |
+| `speaker.h` | 定义选手类 `speaker` |
+| `speech_manager.h` | 定义比赛管理类 `speech_manager` |
+| `speech_manager.cpp` | 实现比赛流程、文件读写和菜单逻辑 |
+| `speech.csv` | 保存往届比赛前三名记录 |
 
-| 文件                  | 作用               |
-| ------------------- | ---------------- |
-| `main.cpp`          | 程序入口，显示菜单，接收用户选择 |
-| `speaker.h`         | 定义选手类            |
-| `speechManager.h`   | 定义比赛管理类          |
-| `speechManager.cpp` | 实现比赛流程           |
-| `speech.csv`        | 保存往届前三名记录        |
+## 核心类设计
 
----
+### `speaker`
 
-# 二、核心类设计
-
-## 1. 选手类：`Speaker`
-
-每个选手需要保存：
-
-* 姓名
-* 两轮比赛成绩
+`speaker` 用来保存单个选手的姓名和两轮比赛成绩：
 
 ```cpp
-class Speaker
+class speaker
 {
 public:
-    string m_Name;
-    double m_Score[2];
+    string _name;
+    double _score[2];
 };
 ```
 
-为什么用数组 `m_Score[2]`？
+`_score[0]` 表示第一轮成绩，`_score[1]` 表示第二轮成绩。因为比赛固定为两轮，使用长度为 2 的数组就能清楚表达数据含义。
 
-因为比赛只有两轮：
+### `speech_manager`
 
-```cpp
-m_Score[0]  // 第一轮成绩
-m_Score[1]  // 第二轮成绩
-```
-
-这样后面写比赛逻辑时会很舒服，不需要额外创建两个变量。
-
----
-
-## 2. 比赛管理类：`SpeechManager`
-
-这个类负责整个系统，相当于“比赛总导演”。
-它应该管理：
-
-* 选手创建
-* 抽签
-* 比赛
-* 晋级
-* 显示结果
-* 保存记录
-* 读取记录
-* 清空记录
-* 菜单交互
-
-推荐这样设计：
+`speech_manager` 负责管理整个系统，包括选手创建、抽签、比赛、晋级、结果展示、记录保存和记录读取。
 
 ```cpp
-class SpeechManager
+class speech_manager
 {
 public:
-    SpeechManager();
+    speech_manager();
 
-    void showMenu();        // 显示菜单
-    void exitSystem();      // 退出系统
+    void show_menu();
+    void exit_system();
 
-    void initSpeech();      // 初始化比赛数据
-    void createSpeaker();   // 创建12名选手
+    void init_speech();
+    void create_speaker();
 
-    void startSpeech();     // 开始比赛总流程
-    void speechDraw();      // 抽签
-    void speechContest();   // 比赛
-    void showScore();       // 显示晋级结果
+    void start_speech();
+    void speech_draw();
+    void speech_contest();
+    void show_score();
 
-    void saveRecord();      // 保存记录
-    void loadRecord();      // 加载记录
-    void showRecord();      // 查看往届记录
-    void clearRecord();     // 清空记录
+    void save_record();
+    void load_record();
+    void show_record();
+    void clear_record();
 
 public:
-    vector<int> m_v1;        // 第一轮比赛选手编号
-    vector<int> m_v2;        // 第二轮比赛选手编号
-    vector<int> m_vVictory;  // 最终前三名选手编号
+    vector<int> _round1_ids;
+    vector<int> _round2_ids;
+    vector<int> _victory_ids;
 
-    map<int, Speaker> m_Speaker; // 编号与选手对象的映射
+    map<int, speaker> _speakers;
 
-    int m_Index;             // 当前比赛届数
-    bool fileIsEmpty;        // 文件是否为空
+    int _round_index;
+    bool _file_is_empty;
 };
 ```
 
----
+## 容器选型
 
-# 三、容器选用设计
+### `map<int, speaker> _speakers`
 
-这是这个项目最关键的部分，容器选对了，代码就会很顺。
-
-## 1. `map<int, Speaker> m_Speaker`
-
-用来保存所有选手信息。
+`_speakers` 保存编号与选手对象之间的映射：
 
 ```cpp
-map<int, Speaker> m_Speaker;
+map<int, speaker> _speakers;
 ```
 
-结构大概是：
+结构可以理解为：
 
-```cpp
-10001 -> 选手A
-10002 -> 选手B
-10003 -> 选手C
+```text
+10001 -> 选手 A
+10002 -> 选手 B
+10003 -> 选手 C
 ...
 ```
 
-为什么用 `map`？
-
-因为选手编号是唯一的，而且你经常会通过编号查找选手：
+使用 `map` 的原因是选手编号唯一，并且程序经常需要通过编号查找选手信息：
 
 ```cpp
-m_Speaker[10001].m_Name;
-m_Speaker[10001].m_Score[0];
+_speakers[10001]._name;
+_speakers[10001]._score[0];
 ```
 
-这比用普通数组更清晰。
+### `vector<int> _round1_ids`
 
----
-
-## 2. `vector<int> m_v1`
-
-保存第一轮所有选手编号。
+`_round1_ids` 保存第一轮所有选手编号：
 
 ```cpp
-m_v1 = {10001, 10002, ..., 10012};
+_round1_ids = {10001, 10002, 10003, 10004, 10005, 10006,
+               10007, 10008, 10009, 10010, 10011, 10012};
 ```
 
-第一轮抽签，其实就是打乱这个 `vector`。
+第一轮抽签就是打乱这个 `vector`：
 
 ```cpp
-shuffle(m_v1.begin(), m_v1.end(), ...);
+shuffle(_round1_ids.begin(), _round1_ids.end(), random_engine);
 ```
 
----
+### `vector<int> _round2_ids`
 
-## 3. `vector<int> m_v2`
-
-保存第二轮晋级选手编号。
-
-第一轮结束后，每组前三名晋级。
-
-所以 `m_v2` 最后应该有 6 个编号。
+`_round2_ids` 保存第一轮晋级选手编号。第一轮结束后，每组前 3 名晋级，所以该容器最终会有 6 个编号。
 
 ```cpp
-m_v2 = {晋级选手1, 晋级选手2, ..., 晋级选手6};
+_round2_ids = {晋级选手1, 晋级选手2, 晋级选手3,
+               晋级选手4, 晋级选手5, 晋级选手6};
 ```
 
----
+### `vector<int> _victory_ids`
 
-## 4. `vector<int> m_vVictory`
-
-保存最终前三名。
-
-第二轮结束后，前三名进入这里：
+`_victory_ids` 保存最终前三名选手编号：
 
 ```cpp
-m_vVictory = {冠军编号, 亚军编号, 季军编号};
+_victory_ids = {冠军编号, 亚军编号, 季军编号};
 ```
 
----
+### `deque<double> scores`
 
-## 5. `deque<double>` 临时保存评委分数
-
-每个选手有 10 个评委打分，需要：
-
-1. 排序
-2. 去掉最高分
-3. 去掉最低分
-4. 求平均分
-
-推荐用：
+每名选手有 10 个评委分数，需要排序后去掉最高分和最低分。`deque` 支持方便地从头尾删除元素：
 
 ```cpp
-deque<double> d;
+deque<double> scores;
+
+scores.pop_front(); // 去掉最低分
+scores.pop_back();  // 去掉最高分
 ```
 
-因为 `deque` 方便头尾删除：
+### `multimap<double, int, greater<double>> group_scores`
+
+小组比赛结束后，可以用 `multimap` 按成绩保存选手编号：
 
 ```cpp
-d.pop_front(); // 去掉最低分
-d.pop_back();  // 去掉最高分
+multimap<double, int, greater<double>> group_scores;
 ```
 
-当然，用 `vector<double>` 也可以，只是删除首元素没有 `deque` 自然。
+这里使用 `multimap` 是为了允许选手同分，使用 `greater<double>` 是为了让成绩从高到低排序。
 
----
+## 比赛流程
 
-# 四、比赛流程设计
-
-整个比赛流程可以这样走：
+完整比赛流程如下：
 
 ```text
 开始比赛
-  ↓
-创建12名选手
-  ↓
-第一轮抽签
-  ↓
-第一轮比赛
-  ↓
-显示第一轮晋级选手
-  ↓
-第二轮抽签
-  ↓
-第二轮比赛
-  ↓
-显示最终前三名
-  ↓
-保存比赛记录
-  ↓
-比赛结束
+  -> 创建 12 名选手
+  -> 第一轮抽签
+  -> 第一轮比赛
+  -> 显示第一轮晋级选手
+  -> 第二轮抽签
+  -> 第二轮比赛
+  -> 显示最终前三名
+  -> 保存比赛记录
+  -> 比赛结束
 ```
 
-也就是 `startSpeech()` 负责串起来：
+`start_speech()` 可以负责串联整个流程：
 
 ```cpp
-void SpeechManager::startSpeech()
+void speech_manager::start_speech()
 {
-    // 第一轮
-    speechDraw();
-    speechContest();
-    showScore();
+    _round_index = 1;
+    speech_draw();
+    speech_contest();
+    show_score();
 
-    // 第二轮
-    speechDraw();
-    speechContest();
-    showScore();
+    _round_index = 2;
+    speech_draw();
+    speech_contest();
+    show_score();
 
-    // 保存结果
-    saveRecord();
+    save_record();
 
-    // 重置比赛状态
-    initSpeech();
-    createSpeaker();
+    init_speech();
+    create_speaker();
 }
 ```
 
-不过这里有一个设计重点：
-你需要用一个变量判断当前是第几轮，比如 `m_Index`。
+## 每轮比赛逻辑
 
-```cpp
-m_Index = 1; // 第一轮
-m_Index = 2; // 第二轮
-```
-
----
-
-# 五、每轮比赛逻辑设计
-
-## 第一轮
-
-第一轮有 12 人，分成 2 组，每组 6 人。
+第一轮有 12 名选手，分为 2 个小组，每组 6 人，每组取前 3 名晋级。第二轮有 6 名选手，作为一个小组比赛，最终取前 3 名。
 
 ```text
-第一组：6人，取前三
-第二组：6人，取前三
+第一轮：12 人 -> 2 组 -> 每组前 3 名 -> 晋级 6 人
+第二轮：6 人 -> 1 组 -> 前 3 名 -> 冠军、亚军、季军
 ```
 
-第一轮结束后：
+## 评分逻辑
+
+每名选手的评分流程如下：
 
 ```text
-晋级人数：6人
-淘汰人数：6人
+生成 10 个评委分数
+  -> 排序
+  -> 去掉最低分
+  -> 去掉最高分
+  -> 计算平均分
+  -> 保存到选手成绩中
 ```
 
-## 第二轮
-
-第二轮有 6 人，还是一组比赛。
-
-```text
-6人比赛，取前三
-```
-
-第二轮结束后：
-
-```text
-冠军
-亚军
-季军
-```
-
----
-
-# 六、比赛评分设计
-
-每个选手评分流程：
-
-```text
-生成10个评委分数
-  ↓
-排序
-  ↓
-去掉最低分
-  ↓
-去掉最高分
-  ↓
-求平均分
-  ↓
-保存到选手成绩中
-```
-
-你可以先用随机分数模拟：
+可以先用随机数模拟评委打分：
 
 ```cpp
 double score = rand() % 401 + 600;
 score = score / 10.0;
 ```
 
-这样可以生成：
+这样可以生成 `60.0` 到 `100.0` 之间的分数。
 
-```text
-60.0 ~ 100.0
-```
-
-评分设计示意：
+评分示例：
 
 ```cpp
 deque<double> scores;
 
 for (int i = 0; i < 10; i++)
 {
-    double score = 随机生成;
+    double score = rand() % 401 + 600;
+    score = score / 10.0;
     scores.push_back(score);
 }
 
@@ -374,105 +265,68 @@ scores.pop_front();
 scores.pop_back();
 
 double sum = 0;
-for (double s : scores)
+for (double score : scores)
 {
-    sum += s;
+    sum += score;
 }
 
-double avg = sum / scores.size();
+double average_score = sum / scores.size();
+_speakers[player_id]._score[_round_index - 1] = average_score;
 ```
 
-然后根据当前轮次保存：
+## 晋级逻辑
+
+小组比赛时，用 `group_scores` 临时保存当前小组选手的成绩：
 
 ```cpp
-m_Speaker[选手编号].m_Score[m_Index - 1] = avg;
+multimap<double, int, greater<double>> group_scores;
 ```
 
----
-
-# 七、小组晋级逻辑设计
-
-这一部分建议使用一个临时容器保存当前小组选手成绩。
-
-可以用：
-
-```cpp
-multimap<double, int, greater<double>> groupScore;
-```
-
-含义是：
-
-```cpp
-成绩 -> 选手编号
-```
-
-为什么用 `multimap`？
-
-因为可能有选手同分，所以用 `multimap` 比 `map` 更安全。
-
-为什么加 `greater<double>`？
-
-因为成绩要从高到低排序。
-
-```cpp
-multimap<double, int, greater<double>> groupScore;
-```
-
-小组比赛结束后，取前三名：
+小组比赛结束后，取前 3 名：
 
 ```cpp
 int count = 0;
 
-for (auto it = groupScore.begin(); it != groupScore.end() && count < 3; it++, count++)
+for (auto it = group_scores.begin(); it != group_scores.end() && count < 3; it++, count++)
 {
-    if (m_Index == 1)
+    if (_round_index == 1)
     {
-        m_v2.push_back(it->second);
+        _round2_ids.push_back(it->second);
     }
     else
     {
-        m_vVictory.push_back(it->second);
+        _victory_ids.push_back(it->second);
     }
 }
 ```
 
----
+## 抽签逻辑
 
-# 八、抽签功能设计
+抽签本质上就是打乱当前轮次的选手编号顺序。
 
-抽签就是打乱选手编号顺序。
-
-第一轮打乱：
+第一轮：
 
 ```cpp
-shuffle(m_v1.begin(), m_v1.end(), ...);
+shuffle(_round1_ids.begin(), _round1_ids.end(), random_engine);
 ```
 
-第二轮打乱：
+第二轮：
 
 ```cpp
-shuffle(m_v2.begin(), m_v2.end(), ...);
+shuffle(_round2_ids.begin(), _round2_ids.end(), random_engine);
 ```
 
-抽签后显示顺序：
+抽签后可以显示演讲顺序：
 
 ```text
-第1位演讲：10003 选手C
-第2位演讲：10008 选手H
+第 1 位演讲：10003 选手 C
+第 2 位演讲：10008 选手 H
 ...
 ```
 
-这样用户能看到比赛顺序。
+## 文件保存设计
 
----
-
-# 九、文件保存设计
-
-建议使用 `speech.csv` 保存每届比赛前三名。
-
-## 推荐 CSV 格式
-
-一届比赛一行：
+建议使用 `speech.csv` 保存每届比赛的前三名。一届比赛保存一行：
 
 ```csv
 届数,冠军编号,冠军姓名,冠军分数,亚军编号,亚军姓名,亚军分数,季军编号,季军姓名,季军分数
@@ -485,13 +339,25 @@ shuffle(m_v2.begin(), m_v2.end(), ...);
 2,10001,选手A,95.20,10007,选手G,91.45,10010,选手J,89.80
 ```
 
-这样查看往届记录时很方便。
+保存时使用追加方式，避免覆盖历史记录：
 
----
+```cpp
+ofstream output_file("speech.csv", ios::out | ios::app);
+```
 
-# 十、菜单功能设计
+清空记录时使用截断方式：
 
-主菜单可以这样：
+```cpp
+ofstream output_file("speech.csv", ios::trunc);
+output_file.close();
+
+_file_is_empty = true;
+_round_index = 1;
+```
+
+## 菜单设计
+
+主菜单可以设计为：
 
 ```text
 ******************************
@@ -503,25 +369,25 @@ shuffle(m_v2.begin(), m_v2.end(), ...);
 ******************************
 ```
 
-对应逻辑：
+对应的选择逻辑：
 
 ```cpp
-int choice;
+int choice = 0;
 cin >> choice;
 
 switch (choice)
 {
 case 1:
-    startSpeech();
+    start_speech();
     break;
 case 2:
-    showRecord();
+    show_record();
     break;
 case 3:
-    clearRecord();
+    clear_record();
     break;
 case 0:
-    exitSystem();
+    exit_system();
     break;
 default:
     cout << "输入有误，请重新输入" << endl;
@@ -529,277 +395,52 @@ default:
 }
 ```
 
----
+## 主要函数职责
 
-# 十一、每个函数的职责
+| 函数 | 职责 |
+|------|------|
+| `init_speech()` | 清空比赛容器，初始化比赛轮次和状态 |
+| `create_speaker()` | 创建 12 名选手，并写入 `_speakers` 与 `_round1_ids` |
+| `speech_draw()` | 根据当前轮次打乱 `_round1_ids` 或 `_round2_ids` |
+| `speech_contest()` | 完成当前轮次的分组、评分、排序和晋级 |
+| `show_score()` | 显示第一轮晋级选手或最终前三名 |
+| `save_record()` | 将最终前三名追加写入 `speech.csv` |
+| `load_record()` | 程序启动时读取历史记录，并判断文件是否为空 |
+| `show_record()` | 显示往届比赛前三名 |
+| `clear_record()` | 清空 `speech.csv`，并更新文件状态 |
 
-## `initSpeech()`
+## 推荐实现顺序
 
-初始化所有容器。
-
-```text
-清空第一轮容器
-清空第二轮容器
-清空冠军容器
-清空选手map
-初始化比赛轮次
-```
-
-注意：每次重新开始比赛前都应该调用它。
-
----
-
-## `createSpeaker()`
-
-创建 12 名选手。
-
-编号：
+建议按以下顺序实现，先让比赛主流程跑通，再补充文件读写：
 
 ```text
-10001 ~ 10012
+1. 编写 speaker 类
+2. 编写 speech_manager 类框架
+3. 实现 show_menu()
+4. 实现 init_speech()
+5. 实现 create_speaker()
+6. 实现 speech_draw()
+7. 实现 speech_contest()
+8. 实现 show_score()
+9. 实现 save_record()
+10. 实现 show_record()
+11. 实现 clear_record()
 ```
 
-姓名可以先简单写：
-
-```text
-选手A
-选手B
-选手C
-...
-```
-
-创建后：
-
-```cpp
-m_Speaker.insert(make_pair(id, speaker));
-m_v1.push_back(id);
-```
-
-也就是：
-
-```text
-map保存选手详细信息
-vector保存比赛顺序
-```
-
----
-
-## `speechDraw()`
-
-根据当前轮次进行抽签。
-
-```text
-如果是第一轮，打乱 m_v1
-如果是第二轮，打乱 m_v2
-```
-
----
-
-## `speechContest()`
-
-核心比赛函数。
-
-职责：
-
-```text
-根据当前轮次选择比赛容器
-每6个人为一组
-每个选手产生10个分数
-去掉最高最低分
-求平均分
-保存成绩
-每组取前三名
-```
-
-这是整个项目最难的函数。
-
-你可以重点把它拆成三层：
-
-```text
-第1层：判断当前是第几轮
-第2层：按照每6人为一组比赛
-第3层：给每个选手打分并排序晋级
-```
-
----
-
-## `showScore()`
-
-显示每轮晋级选手。
-
-第一轮显示：
-
-```text
-第一轮晋级选手：
-编号：10003 姓名：选手C 成绩：88.5
-编号：10007 姓名：选手G 成绩：91.2
-...
-```
-
-第二轮显示：
-
-```text
-本届比赛前三名：
-冠军：10008 选手H 成绩：95.6
-亚军：10003 选手C 成绩：93.1
-季军：10011 选手K 成绩：90.4
-```
-
----
-
-## `saveRecord()`
-
-把最终前三名写入文件。
-
-打开方式建议用追加：
-
-```cpp
-ofstream ofs("speech.csv", ios::out | ios::app);
-```
-
-因为每次比赛都要保留历史记录。
-
----
-
-## `loadRecord()`
-
-程序启动时读取文件，判断是否有历史记录。
-
-可以设置：
-
-```cpp
-fileIsEmpty = true;
-```
-
-如果文件为空，就提示：
-
-```text
-文件为空，暂无比赛记录
-```
-
----
-
-## `showRecord()`
-
-读取 `speech.csv`，显示所有往届比赛前三名。
-
-显示格式可以设计成：
-
-```text
-第1届比赛结果：
-冠军：10008 选手H 分数：92.35
-亚军：10003 选手C 分数：90.12
-季军：10011 选手K 分数：88.65
-```
-
----
-
-## `clearRecord()`
-
-清空文件。
-
-```cpp
-ofstream ofs("speech.csv", ios::trunc);
-ofs.close();
-```
-
-同时更新状态：
-
-```cpp
-fileIsEmpty = true;
-m_Index = 1;
-```
-
----
-
-# 十二、推荐完整流程图
-
-```text
-程序启动
-  ↓
-创建 SpeechManager 对象
-  ↓
-加载历史记录
-  ↓
-显示菜单
-  ↓
-用户选择功能
-  ↓
-1. 开始比赛
-     ↓
-   初始化选手
-     ↓
-   第一轮抽签
-     ↓
-   第一轮比赛
-     ↓
-   显示晋级6人
-     ↓
-   第二轮抽签
-     ↓
-   第二轮比赛
-     ↓
-   显示前三名
-     ↓
-   保存记录
-
-2. 查看记录
-     ↓
-   读取 speech.csv
-     ↓
-   显示往届前三名
-
-3. 清空记录
-     ↓
-   清空 speech.csv
-
-0. 退出程序
-```
-
----
-
-# 十三、你这个项目主要练到的 C++ 知识
-
-| 知识点        | 在项目中的体现                   |
-| ---------- | ------------------------- |
-| 类和对象       | `Speaker`、`SpeechManager` |
-| 构造函数       | 初始化比赛管理系统                 |
-| `vector`   | 保存比赛选手编号                  |
-| `map`      | 编号映射选手信息                  |
-| `deque`    | 存放评委分数，方便去头尾              |
-| `multimap` | 按成绩排序并允许同分                |
-| `sort`     | 排序评委分数                    |
-| `shuffle`  | 抽签打乱顺序                    |
-| 文件读写       | 保存和查看历史记录                 |
-| 菜单系统       | 控制程序流程                    |
-| 函数封装       | 每个功能独立成函数                 |
-
----
-
-# 十四、推荐你先按这个顺序写
-
-不要一上来就写完整项目，不然很容易变成代码毛线球 🧶。
-
-建议顺序：
-
-```text
-1. 先写 Speaker 类
-2. 再写 SpeechManager 类框架
-3. 写菜单 showMenu()
-4. 写 initSpeech()
-5. 写 createSpeaker()
-6. 写 speechDraw()
-7. 写 speechContest()
-8. 写 showScore()
-9. 写 saveRecord()
-10. 写 showRecord()
-11. 写 clearRecord()
-```
-
-最难的是：
-
-```text
-speechContest()
-```
-
-所以你可以先把文件读写放后面，先保证比赛流程能完整跑通。
+其中 `speech_contest()` 是核心函数，建议拆成三步理解：判断当前轮次、按小组比赛、按成绩筛选晋级选手。
+
+## 涉及的 C++ 知识点
+
+| 知识点 | 在项目中的体现 |
+|--------|----------------|
+| 类和对象 | `speaker`、`speech_manager` |
+| 构造函数 | 初始化比赛管理系统 |
+| `vector` | 保存比赛选手编号 |
+| `map` | 根据编号映射选手信息 |
+| `deque` | 保存评委分数，便于删除头尾元素 |
+| `multimap` | 按成绩排序，并允许同分 |
+| `sort` | 对评委分数排序 |
+| `shuffle` | 模拟抽签，打乱选手顺序 |
+| 文件读写 | 保存和查看历史比赛记录 |
+| 菜单系统 | 控制程序流程 |
+| 函数封装 | 将不同功能拆分到独立函数中 |
