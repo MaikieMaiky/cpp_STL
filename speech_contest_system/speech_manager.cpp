@@ -1,10 +1,18 @@
 #include "speech_manager.h"
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <random>
 #include <algorithm>
 #include <deque>
 #include <numeric>
+
+// 构造函数
+speech_manager::speech_manager()
+{
+    load_record();
+}
+
 
 // 显示菜单
 void speech_manager::show_menu()
@@ -86,7 +94,7 @@ void speech_manager::start_speech()
     show_score();
 
     // 保存记录
-    // save_record();
+    save_record();
 }
 
 // 抽签 需区分第一轮和第二轮
@@ -266,4 +274,107 @@ void speech_manager::show_score()
         }
         cout << endl;
     }
+}
+
+
+// 保存记录
+void speech_manager::save_record()
+{
+    fstream fs;
+    fs.open("speech.csv", ios::out | ios::app);
+    if (!fs.is_open())
+    {
+        cout << "file open error" << endl;
+        return;
+    }
+    // 写入数据
+    for (auto& id : _victory_ids)
+    {
+        fs << id << "," << _speakers.at(id)._name << "," << _speakers.at(id)._score[1] << ",";
+    }
+    fs << endl;
+    fs.close();
+
+    // 更新文件状态
+    if (_file_is_empty == true)
+    {
+        _file_is_empty = false;
+    }
+}
+
+// 加载历史记录 程序驱动时调用 判断文件是否为空
+void speech_manager::load_record()
+{
+    fstream fs;
+    fs.open("speech.csv", ios::in);
+    if (!fs.is_open())
+    {
+        cout << "file open error" << endl;
+        return;
+    }
+    // 判断文件是否为空
+    if (fs.peek() == EOF)
+    {
+        _file_is_empty = true;
+    }
+    else
+    {
+        _file_is_empty = false;
+    }
+    fs.close();
+}
+
+
+// 显示历史记录
+void speech_manager::show_record()
+{
+    fstream fs;
+    fs.open("speech.csv", ios::in);
+    if (!fs.is_open())
+    {
+        cout << "file open error" << endl;
+        return;
+    }
+    // 判断文件是否为空
+    if (_file_is_empty)
+    {
+        cout << "no record" << endl;
+        fs.close();
+        return;
+    }
+    else
+    {
+        cout << "record is as follows:" << endl;
+        vector<string> results;
+        string line;
+        while (getline(fs, line))
+        {
+            results.push_back(line);
+        }
+        fs.close();
+        // 显示结果 以逗号为分隔 使用制表符代替所有逗号
+        for (auto& item : results)
+        {
+            while (item.find(',') != string::npos)
+            {
+                item.replace(item.find(','), 1, "\t");
+            }
+            cout << item << endl;
+        }
+    }
+}
+
+// 清空历史记录
+void speech_manager::clear_record()
+{
+    fstream fs;
+    fs.open("speech.csv", ios::out | ios::trunc);
+    if (!fs.is_open())
+    {
+        cout << "file open error" << endl;
+        return;
+    }
+    fs.close();
+    _file_is_empty = true;
+    cout << "clear record success" << endl;
 }

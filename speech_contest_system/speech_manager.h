@@ -10,7 +10,7 @@ using namespace std;
 class speech_manager
 {
 public:
-    speech_manager() {}
+    speech_manager();
     ~speech_manager() {}
 
     void show_menu();       // 显示菜单

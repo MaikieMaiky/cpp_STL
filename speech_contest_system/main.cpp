@@ -23,11 +23,11 @@ int main()
                 break;
             // 查看往届记录
             case 2:
-                // sm.show_record();
+                sm.show_record();
                 break;
             // 清空比赛记录
             case 3:
-                // sm.clear_record();
+                sm.clear_record();
                 break;
             // 退出系统
             case 0:
