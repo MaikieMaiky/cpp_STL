@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "speaker.h"
+
 using namespace std;
 
 class speech_manager
@@ -35,8 +36,8 @@ public:
 
     map<int, speaker> _speakers;    // 选手编号与选手对象的映射
 
-    int _round_index;       // 当前轮次
-    bool _file_is_empty;    // 文件是否为空
+    int _round_index = 1;       // 当前轮次
+    bool _file_is_empty = true;    // 文件是否为空
 };
 
 #endif

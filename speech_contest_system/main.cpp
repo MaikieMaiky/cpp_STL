@@ -1,11 +1,14 @@
 #include "speech_manager.h"
 #include <cstdlib>
 #include <iostream>
+#include <ctime>
 using namespace std;
 
 int main()
 {
     system("cls");
+    // 随机数种子
+    srand((unsigned int)time(nullptr));
     speech_manager sm;
     int choice = 0;
     while (true)
@@ -16,7 +19,7 @@ int main()
         {
             // 开始演讲比赛
             case 1:
-                // sm.start_speech();
+                sm.start_speech();
                 break;
             // 查看往届记录
             case 2:
