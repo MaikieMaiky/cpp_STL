@@ -2,7 +2,20 @@
 #include <iostream>
 #include "global_file.h"
 #include <fstream>
+#include <sstream>
 using namespace std;
+
+// 默认构造
+Administrator::Administrator()
+{
+    InitVector();
+}
+
+// 有参构造
+Administrator::Administrator(string name, string password) : Identity(name, password)
+{
+    InitVector();
+}
 
 // 显示子菜单
 void Administrator::ShowMenu()
@@ -57,12 +70,39 @@ void Administrator::AddAccount()
     // 输入账号信息
     cout << tip;
     cin >> id;
+
+    // 3.check the account information is already exist
+    if (type == 1)
+    {
+        for (auto &teacher : teacher_)
+        {
+            if (teacher.id_ == id)
+            {
+                cout << "Teacher already exists" << endl;
+                return;
+            }
+        }
+    }
+    else if (type == 2)
+    {
+        for (auto &student : student_)
+        {
+            if (student.id_ == id)
+            {
+                cout << "Student already exists" << endl;
+                return;
+            }
+        }
+    }
+
     cout << "Please input the name: ";
     cin >> name;
     cout << "Please input the password: ";
     cin >> password;
 
-    // 3.save the account information to the file
+
+    
+    // 4.save the account information to the file
     // 打开文件 append
     ofstream ofs;
     ofs.open(filename, ios::app);
@@ -76,6 +116,7 @@ void Administrator::AddAccount()
     cout << "Add account successfully" << endl;
     return;
 }
+
 // 查看账号
 void Administrator::ViewAccount()
 {
@@ -89,4 +130,56 @@ void Administrator::ViewMachineRoom()
 // 清空预约
 void Administrator::ClearReservation()
 {
+}
+
+// 初始化容器
+void Administrator::InitVector()
+{
+    string filename = "";
+    string line;
+    // 读取教师文件
+    filename = kTeacherFile;
+    ifstream ifs;
+    ifs.open(filename, ios::in);
+    if (!ifs.is_open())
+    {
+        cout << "File open error" << endl;
+        return;
+    }
+    while (getline(ifs, line))
+    {
+        stringstream ss(line);
+        Teacher teacher;
+        char comma;
+        ss >> teacher.id_ >> comma;
+        getline(ss, teacher.name_, ',');
+        getline(ss, teacher.password_);
+        teacher_.push_back(teacher);
+    }
+    ifs.close();
+
+    
+    // 读取学生文件
+    filename = kStudentFile;
+    ifs.open(filename, ios::in);
+    if (!ifs.is_open())
+    {
+        cout << "File open error" << endl;
+        return;
+    }
+    while (getline(ifs, line))
+    {
+        stringstream ss(line);
+        Student student;
+        char comma;
+        ss >> student.id_ >> comma;
+        getline(ss, student.name_, ',');
+        getline(ss, student.password_);
+        student_.push_back(student);
+    }
+    ifs.close();
+
+    // 打印输出调试信息
+    cout << "Student size: " << student_.size() << endl;
+    cout << "Teacher size: " << teacher_.size() << endl;
 }

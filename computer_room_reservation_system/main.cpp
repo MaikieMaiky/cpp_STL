@@ -48,8 +48,6 @@ void ManagerMenu(Identity* &manager)
                 delete manager;
                 manager = nullptr;
                 cout << "Exit successfully" << endl;
-                system("pause");
-                system("cls");
                 return;
                 break;
             default:
