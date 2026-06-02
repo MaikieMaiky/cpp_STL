@@ -3,7 +3,18 @@
 #include "global_file.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 using namespace std;
+
+// for each使用的打印函数
+void print_teacher(Teacher &teacher)
+{
+    cout << "Teacher ID: " << teacher.id_ << " " << "Teacher Name: " << teacher.name_ << " " << "Teacher Password: " << teacher.password_ << endl;
+}
+void print_student(Student &student)
+{
+    cout << "Student ID: " << student.id_ << " " << "Student Name: " << student.name_ << " " << "Student Password: " << student.password_ << endl;
+}
 
 // 默认构造
 Administrator::Administrator()
@@ -124,13 +135,32 @@ void Administrator::AddAccount()
     {
         student_.push_back(Student(name, password, id));
     }
-    
+
     return;
 }
 
 // 查看账号
 void Administrator::ViewAccount()
 {
+    // 1. choose the account you want to view: Teacher or Student
+    cout << "Please input the type of account you want to view: " << endl;
+    cout << "1. Teacher" << endl;
+    cout << "2. Student" << endl;
+    int type = 0;
+    cin >> type;
+    if (type == 1)
+    {
+        for_each(teacher_.begin(), teacher_.end(), print_teacher);
+    }
+    else if (type == 2)
+    {
+        for_each(student_.begin(), student_.end(), print_student);
+    }
+    else
+    {
+        cout << "Invalid input, please try again" << endl;
+        return;
+    }
 }
 
 // 查看机房
