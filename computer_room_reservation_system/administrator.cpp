@@ -114,6 +114,17 @@ void Administrator::AddAccount()
     ofs << id << "," << name << "," << password << endl;
     ofs.close();
     cout << "Add account successfully" << endl;
+
+    // 5.add the account information to the vector
+    if (type == 1)
+    {
+        teacher_.push_back(Teacher(name, password, id));
+    }
+    else if (type == 2)
+    {
+        student_.push_back(Student(name, password, id));
+    }
+    
     return;
 }
 
