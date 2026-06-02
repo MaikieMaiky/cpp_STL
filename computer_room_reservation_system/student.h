@@ -12,7 +12,7 @@ public:
     Student();
 
     // 有参构造
-    Student(string name, string password, int id);
+    Student(string name, string password, int id) : Identity(name, password), id_(id) {}
 
     // 显示菜单
     virtual void ShowMenu() override;

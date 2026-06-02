@@ -3,12 +3,71 @@
 #include <fstream>
 #include <sstream>
 #include "global_file.h"
+#include "identity.h"
+#include "administrator.h"
 using namespace std;
+
+
+
+// 管理员子界面菜单
+void ManagerMenu(Identity* &manager)
+{
+    system("cls");
+    while (true)
+    {
+        manager->ShowMenu();
+
+        // 转回子类指针调用特有函数
+        Administrator* admin = (Administrator*)manager;
+        int choice = 0;
+        cin >> choice;
+        switch (choice)
+        {
+            case 1:
+                // 添加账号
+                cout << "Add Account" << endl;
+                admin->AddAccount();
+                break;
+            case 2:
+                // 查看账号
+                cout << "View Account" << endl;
+                admin->ViewAccount();
+                break;
+            case 3:
+                // 查看机房
+                cout << "View Machine Room" << endl;
+                admin->ViewMachineRoom();
+                break;
+            case 4:
+                // 清空预约
+                cout << "Clear Reservation" << endl;
+                admin->ClearReservation();
+                break;
+            case 5:
+                // 退出系统 释放堆空间
+                delete manager;
+                manager = nullptr;
+                cout << "Exit successfully" << endl;
+                system("pause");
+                system("cls");
+                return;
+                break;
+            default:
+                cout << "Invalid input, please try again" << endl;
+                break;
+        }
+        system("pause");
+        system("cls");
+    }
+}
 
 // login global function
 // 参数1: 文件名 参数2：操作身份类型
 void Login(string filename, int type)
 {
+    // 创建父类指针 用于接收子类指针
+    Identity* manager = nullptr;
+
     ifstream ifs;
     ifs.open(filename, ios::in);
     // 文件打开失败
@@ -67,6 +126,7 @@ void Login(string filename, int type)
                 if (id == file_id && name == file_name && password == file_password)
                 {
                     cout << "Student login successful" << endl;
+                    system("pause");
                     return;
                 }
             }
@@ -94,6 +154,7 @@ void Login(string filename, int type)
                 if (id == file_id && name == file_name && password == file_password)
                 {
                     cout << "Teacher login successful" << endl;
+                    system("pause");
                     return;
                 }
             }
@@ -118,6 +179,10 @@ void Login(string filename, int type)
                 if (name == file_name && password == file_password)
                 {
                     cout << "Admin login successful" << endl;
+                    manager = new Administrator(name, password);
+                    system("pause");
+                    system("cls");
+                    ManagerMenu(manager);
                     return;
                 }
             }
@@ -128,7 +193,6 @@ void Login(string filename, int type)
 
     ifs.close();
 }
-
 
 int main()
 {
