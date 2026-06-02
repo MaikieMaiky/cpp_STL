@@ -1,0 +1,4 @@
+#ifndef __ADMINISTRATOR
+#define __ADMINISTRATOR
+
+#endif  // __ADMINISTRATOR
