@@ -1,6 +1,7 @@
 #include "computer_room_reservation_system.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "global_file.h"
 using namespace std;
 
@@ -37,7 +38,7 @@ void Login(string filename, int type)
     }
     // 输入用户名和密码
     cout << "Please input your name: ";
-    cin >> name;
+    getline(cin >> ws, name);
     cout << "Please input your password: ";
     cin >> password;
 
@@ -45,14 +46,84 @@ void Login(string filename, int type)
     switch (type)
     {
         case 1:
+        {
             // 学生身份验证
+            // 获取每行输入 以逗号进行分隔 与用户输入的id,name,password进行比较
+            string line;
+            int file_id = 0;
+            string file_name;
+            string file_password;
+            while (getline(ifs, line))
+            {
+                // 以逗号进行分隔
+                // 字符串流 可以当作一个流 从流中读取数据
+                stringstream ss(line);
+                char comma;
+                ss >> file_id >> comma;
+                getline(ss, file_name, ',');
+                getline(ss, file_password);
+
+                // 三项信息全部匹配则登录成功
+                if (id == file_id && name == file_name && password == file_password)
+                {
+                    cout << "Student login successful" << endl;
+                    return;
+                }
+            }
+            cout << "Student login failed: invalid account or password" << endl;
             break;
+        }
         case 2:
+        {
             // 教师身份验证
+            // 获取每行输入 以逗号进行分隔 与用户输入的id,name,password进行比较
+            string line;
+            int file_id = 0;
+            string file_name;
+            string file_password;
+            while (getline(ifs, line))
+            {
+                // 以逗号进行分隔
+                stringstream ss(line);
+                char comma;
+                ss >> file_id >> comma;
+                getline(ss, file_name, ',');
+                getline(ss, file_password);
+
+                // 三项信息全部匹配则登录成功
+                if (id == file_id && name == file_name && password == file_password)
+                {
+                    cout << "Teacher login successful" << endl;
+                    return;
+                }
+            }
+            cout << "Teacher login failed: invalid account or password" << endl;
             break;
+        }
         case 3:
+        {
             // 管理员身份验证
+            // 获取每行输入 与用户输入的name,password进行比较
+            string line;
+            string file_name;
+            string file_password;
+            while (getline(ifs, line))
+            {
+                // 以逗号进行分隔
+                stringstream ss(line);
+                getline(ss, file_name, ',');
+                getline(ss, file_password);
+
+                // 两项信息全部匹配则登录成功
+                if (name == file_name && password == file_password)
+                {
+                    cout << "Admin login successful" << endl;
+                    return;
+                }
+            }
+            cout << "Admin login failed: invalid account or password" << endl;
             break;
+        }
     }
 
     ifs.close();
