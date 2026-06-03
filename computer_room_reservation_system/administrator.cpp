@@ -15,6 +15,10 @@ void print_student(Student &student)
 {
     cout << "Student ID: " << student.id_ << " " << "Student Name: " << student.name_ << " " << "Student Password: " << student.password_ << endl;
 }
+void print_machineRoom(MachineRoom &machineRoom)
+{
+    cout << "Room ID: " << machineRoom.room_id << " Capacity: " << machineRoom.capacity << endl;
+}
 
 // 默认构造
 Administrator::Administrator()
@@ -163,9 +167,38 @@ void Administrator::ViewAccount()
     }
 }
 
+// 获取机房信息
+void Administrator::GetMachineRoomInfo()
+{
+    // 1.打开文件
+    string filename = kMachineRoomFile;
+    ifstream ifs;
+    ifs.open(filename, ios::in);
+    if (!ifs.is_open())
+    {
+        cout << "File open error" << endl;
+        return;
+    }
+
+    machineRoom_.clear();
+    string line;
+    while (getline(ifs, line))
+    {
+        stringstream ss(line);
+        MachineRoom machineRoom;
+        char comma;
+        ss >> machineRoom.room_id >> comma;
+        ss >> machineRoom.capacity;
+        machineRoom_.push_back(machineRoom);
+    }
+    ifs.close();
+}
+
 // 查看机房
 void Administrator::ViewMachineRoom()
 {
+    GetMachineRoomInfo();
+    for_each(machineRoom_.begin(), machineRoom_.end(), print_machineRoom);
 }
 
 // 清空预约

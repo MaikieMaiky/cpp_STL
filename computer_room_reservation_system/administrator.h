@@ -5,6 +5,7 @@
 #include <vector>
 #include "teacher.h"
 #include "student.h"
+#include "machine_room.h"
 using namespace std;
 
 class Administrator : public Identity
@@ -24,6 +25,9 @@ public:
 
     // 查看账号
     void ViewAccount();
+
+    // 获取机房信息
+    void GetMachineRoomInfo();
     
     // 查看机房
     void ViewMachineRoom();
@@ -39,6 +43,9 @@ public:
 
     // 学生容器
     vector<Student> student_;
+
+    // 机房容器
+    vector<MachineRoom> machineRoom_;
 };
 
 #endif  // __ADMINISTRATOR
