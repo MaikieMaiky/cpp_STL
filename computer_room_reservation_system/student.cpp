@@ -127,11 +127,28 @@ void Student::ViewSelfReservation()
         if (reservation.second["student_id"] == to_string(id_))
         {
             cout << "date: " << reservation.second["date"] << " ";
-            cout << "time_slot: " << reservation.second["time_slot"];
+            cout << "time_slot: " << (reservation.second["time_slot"] == "1" ? "Morning" : "Afternoon") << " ";
             cout << "room_id: " << reservation.second["room_id"] << " ";
             cout << "student_id: " << reservation.second["student_id"] << " ";
             cout << "student_name: " << reservation.second["student_name"] << " ";
-            cout << "status: " << reservation.second["status"] << endl;
+            cout << "status: ";
+            if (reservation.second["status"] == "1")
+            {
+                cout << "Pending" << endl;
+            }
+            else if (reservation.second["status"] == "2")
+            {
+                cout << "Approved" << endl;
+            }
+            else if (reservation.second["status"] == "3")
+            {
+                cout << "Rejected" << endl;
+            }
+            else if (reservation.second["status"] == "0")
+            {
+                cout << "Canceled" << endl;
+            }
+            cout << endl;
         }
     }    
 }
@@ -141,15 +158,78 @@ void Student::ViewAllReservation()
     for (auto& reservation : this->reservation_file_.reservations_)
     {
         cout << "date: " << reservation.second["date"] << " ";
-        cout << "time_slot: " << reservation.second["time_slot"] << " ";
+        cout << "time_slot: " << (reservation.second["time_slot"] == "1" ? "Morning" : "Afternoon") << " ";
         cout << "room_id: " << reservation.second["room_id"] << " ";
         cout << "student_id: " << reservation.second["student_id"] << " ";
         cout << "student_name: " << reservation.second["student_name"] << " ";
-        cout << "status: " << reservation.second["status"] << endl;
+        cout << "status: ";
+        if (reservation.second["status"] == "1")
+        {
+            cout << "Pending" << endl;
+        }
+        else if (reservation.second["status"] == "2")
+        {
+            cout << "Approved" << endl;
+        }
+        else if (reservation.second["status"] == "3")
+        {
+            cout << "Rejected" << endl;
+        }
+        else if (reservation.second["status"] == "0")
+        {
+            cout << "Canceled" << endl;
+        }
+        cout << endl;
     }
 }
 
 // 取消预约
 void Student::CancelReservation()
 {
+    // 使用map存储个人预约和全体预约之间编号的映射
+    map<int, int> reservation_map;
+    int index = 1;
+    for (auto& reservation : this->reservation_file_.reservations_)
+    {
+        // 只显示审核中和审核通过的预约
+        if (reservation.second["student_id"] == to_string(id_))
+        {
+            if (reservation.second["status"] == "1" || reservation.second["status"] == "2")
+            {
+                reservation_map[index] = reservation.first;
+                index++;
+            }
+        }
+    }
+    for (auto& [key, value] : reservation_map)
+    {
+        cout << key << ". ";
+        cout << "date: " << this->reservation_file_.reservations_[value]["date"] << " ";
+        cout << "time_slot: " << (this->reservation_file_.reservations_[value]["time_slot"] == "1" ? "Morning" : "Afternoon") << " ";
+        cout << "room_id: " << this->reservation_file_.reservations_[value]["room_id"] << " ";
+        cout << "student_id: " << this->reservation_file_.reservations_[value]["student_id"] << " ";
+        cout << "student_name: " << this->reservation_file_.reservations_[value]["student_name"] << " ";
+        cout << "status: ";
+        if (this->reservation_file_.reservations_[value]["status"] == "1")
+        {
+            cout << "Pending" << endl;
+        }
+        else if (this->reservation_file_.reservations_[value]["status"] == "2")
+        {
+            cout << "Approved" << endl;
+        }
+    }
+
+    // 获取用户选择要取消的预约编号
+    cout << "Please input the number of the reservation you want to cancel: " << endl;
+    int cancel_number = 0;
+    cin >> cancel_number;
+    if (cancel_number < 1 || cancel_number > index - 1)
+    {
+        cout << "Invalid input, please try again" << endl;
+        return;
+    }
+    this->reservation_file_.reservations_[reservation_map[cancel_number]]["status"] = "0";
+    this->reservation_file_.SaveReservation();
+    cout << "Cancel reservation successfully" << endl;
 }
