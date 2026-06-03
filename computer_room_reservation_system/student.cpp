@@ -123,11 +123,13 @@ void Student::ApplyReservation()
 // 查看自身预约
 void Student::ViewSelfReservation()
 {
+    
+    
 }
-
 // 查看所有预约
 void Student::ViewAllReservation()
 {
+
 }
 
 // 取消预约

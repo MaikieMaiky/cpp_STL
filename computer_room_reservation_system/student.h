@@ -4,6 +4,7 @@
 #include "identity.h"
 #include "machine_room.h"
 #include <vector>
+#include "reservation_file.h"
 using namespace std;
 
 
@@ -40,6 +41,8 @@ public:
     // 机房信息
     vector<MachineRoom> machine_room_;
 
+    // 预约文件
+    ReservationFile reservation_file_;
 };
 
 #endif  // __STUDENT
