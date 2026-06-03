@@ -12,7 +12,6 @@ public:
     ~ReservationFile();
     void LoadReservation();
     void SaveReservation();
-    void ClearReservation();
 
     map<int, map<string, string>> reservations_;
 };
