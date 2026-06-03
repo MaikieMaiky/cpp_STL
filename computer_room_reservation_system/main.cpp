@@ -7,7 +7,55 @@
 #include "administrator.h"
 using namespace std;
 
+// 学生子界面菜单
+void StudentMenu(Identity* &student)
+{
+    system("cls");
+    while (true)
+    {
+        student->ShowMenu();
 
+        // 转回子类指针调用特有函数
+        Student* stu = (Student*)student;
+        int choice = 0;
+        cin >> choice;
+        switch (choice)
+        {
+            case 1:
+                // 申请预约
+                cout << "Apply Reservation" << endl;
+                stu->ApplyReservation();
+                break;
+            case 2:
+                // 查看自身预约
+                cout << "View Self Reservation" << endl;
+                stu->ViewSelfReservation();
+                break;
+            case 3:
+                // 查看所有预约
+                cout << "View All Reservation" << endl;
+                stu->ViewAllReservation();
+                break;
+            case 4:
+                // 取消预约
+                cout << "Cancel Reservation" << endl;
+                stu->CancelReservation();
+                break;
+            case 5:
+                // 退出系统 释放堆空间
+                delete student;
+                student = nullptr;
+                cout << "Exit successfully" << endl;
+                return;
+                break;
+            default:
+                cout << "Invalid input, please try again" << endl;
+                break;
+        }
+        system("pause");
+        system("cls");
+    }
+}
 
 // 管理员子界面菜单
 void ManagerMenu(Identity* &manager)
@@ -124,7 +172,10 @@ void Login(string filename, int type)
                 if (id == file_id && name == file_name && password == file_password)
                 {
                     cout << "Student login successful" << endl;
+                    Identity* student = new Student(name, password, id);
                     system("pause");
+                    system("cls");
+                    StudentMenu(student);
                     return;
                 }
             }

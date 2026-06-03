@@ -2,6 +2,8 @@
 #define __STUDENT
 
 #include "identity.h"
+#include "machine_room.h"
+#include <vector>
 using namespace std;
 
 
@@ -12,7 +14,10 @@ public:
     Student();
 
     // 有参构造
-    Student(string name, string password, int id) : Identity(name, password), id_(id) {}
+    Student(string name, string password, int id);
+
+    // 获取机房信息
+    void GetMachineRoomInfo();
 
     // 显示菜单
     virtual void ShowMenu() override;
@@ -31,6 +36,10 @@ public:
     
     // 学号
     int id_ = 0;
+
+    // 机房信息
+    vector<MachineRoom> machine_room_;
+
 };
 
 #endif  // __STUDENT
