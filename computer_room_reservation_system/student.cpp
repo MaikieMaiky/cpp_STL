@@ -107,16 +107,15 @@ void Student::ApplyReservation()
     cout << "Reservation successful, please wait for approval" << endl;
 
     // 6. 追加到预约文件
-    ofstream ofs;
-    ofs.open(kReservationFile, ios::app);
-    if (!ofs.is_open())
-    {
-        cout << "File open error" << endl;
-        return;
-    }
-    ofs << "date:" << date << "," << "time_slot:" << time_slot << "," << "room_id:" << room_id
-    << "," << "student_id:" << id_ << "," << "student_name:" << name_ << "," << "status:" << 1 << endl;
-    ofs.close();
+    this->reservation_file_.reservations_[this->reservation_file_.reservations_.size() + 1] = {
+        {"date", to_string(date)},
+        {"time_slot", to_string(time_slot)},
+        {"room_id", to_string(room_id)},
+        {"student_id", to_string(id_)},
+        {"student_name", name_},
+        {"status", "1"}
+    };
+    this->reservation_file_.SaveReservation();
     return;
 }
 

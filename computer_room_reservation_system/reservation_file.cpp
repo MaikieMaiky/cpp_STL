@@ -43,7 +43,7 @@ void ReservationFile::LoadReservation()
         getline(ss, room_id, ',');
         getline(ss, student_id, ',');
         getline(ss, student_name, ',');
-        getline(ss, status);
+        getline(ss, status, ',');
 
         // 2. 每一部分按照冒号分割 拿出每一部分
         string key;
@@ -100,5 +100,23 @@ void ReservationFile::LoadReservation()
 
 void ReservationFile::SaveReservation()
 {
-
+    // 1. 打开文件并truncate
+    ofstream ofs;
+    ofs.open(kReservationFile, ios::trunc);
+    if (!ofs.is_open())
+    {
+        cout << "File open error" << endl;
+        return;
+    }
+    // 2. 写入数据
+    for (auto& reservation : reservations_)
+    {
+        for (auto& [key, value] : reservation.second)
+        {
+            ofs << key << ":" << value << ",";
+        }
+        ofs << endl;
+    }   
+    ofs.close();
+    return;
 }
