@@ -2,6 +2,7 @@
 #define __TEACHER
 
 #include "identity.h"
+#include "reservation_file.h"
 using namespace std;
 
 
@@ -25,6 +26,9 @@ public:
     
     // 职工号
     int id_ = 0;
+
+    // 预约文件
+    ReservationFile reservation_file_;
 };
 
 

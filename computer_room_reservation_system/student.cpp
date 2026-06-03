@@ -122,6 +122,21 @@ void Student::ApplyReservation()
 // 查看自身预约
 void Student::ViewSelfReservation()
 {
+    int empty = 0;
+    for (auto& reservation : this->reservation_file_.reservations_)
+    {
+        if (reservation.second["student_id"] == to_string(id_))
+        {
+            empty = 1;
+            break;
+        }
+    }
+    if (empty == 0)
+    {
+        cout << "No reservation" << endl;
+        return;
+    }
+
     for (auto& reservation : this->reservation_file_.reservations_)
     {
         if (reservation.second["student_id"] == to_string(id_))
@@ -134,19 +149,19 @@ void Student::ViewSelfReservation()
             cout << "status: ";
             if (reservation.second["status"] == "1")
             {
-                cout << "Pending" << endl;
+                cout << "Pending";
             }
             else if (reservation.second["status"] == "2")
             {
-                cout << "Approved" << endl;
+                cout << "Approved";
             }
             else if (reservation.second["status"] == "3")
             {
-                cout << "Rejected" << endl;
+                cout << "Rejected";
             }
             else if (reservation.second["status"] == "0")
             {
-                cout << "Canceled" << endl;
+                cout << "Canceled";
             }
             cout << endl;
         }
@@ -155,6 +170,12 @@ void Student::ViewSelfReservation()
 // 查看所有预约
 void Student::ViewAllReservation()
 {
+    if (this->reservation_file_.reservations_.empty())
+    {
+        cout << "No reservation" << endl;
+        return;
+    }
+
     for (auto& reservation : this->reservation_file_.reservations_)
     {
         cout << "date: " << reservation.second["date"] << " ";
@@ -165,19 +186,19 @@ void Student::ViewAllReservation()
         cout << "status: ";
         if (reservation.second["status"] == "1")
         {
-            cout << "Pending" << endl;
+            cout << "Pending";
         }
         else if (reservation.second["status"] == "2")
         {
-            cout << "Approved" << endl;
+            cout << "Approved";
         }
         else if (reservation.second["status"] == "3")
         {
-            cout << "Rejected" << endl;
+            cout << "Rejected";
         }
         else if (reservation.second["status"] == "0")
         {
-            cout << "Canceled" << endl;
+            cout << "Canceled";
         }
         cout << endl;
     }
@@ -212,12 +233,13 @@ void Student::CancelReservation()
         cout << "status: ";
         if (this->reservation_file_.reservations_[value]["status"] == "1")
         {
-            cout << "Pending" << endl;
+            cout << "Pending";
         }
         else if (this->reservation_file_.reservations_[value]["status"] == "2")
         {
-            cout << "Approved" << endl;
+            cout << "Approved";
         }
+        cout << endl;
     }
 
     // 获取用户选择要取消的预约编号

@@ -7,6 +7,44 @@
 #include "administrator.h"
 using namespace std;
 
+// 教师子界面菜单
+void TeacherMenu(Identity* &teacher)
+{
+    system("cls");
+    while (true)
+    {
+        teacher->ShowMenu();
+
+        // 转回子类指针调用特有函数
+        Teacher* tea = (Teacher*)teacher;
+        int choice = 0;
+        cin >> choice;
+        switch (choice)
+        {
+            case 1:
+                // 查看所有预约
+                tea->ViewAllReservation();
+                break;
+            case 2:
+                // 审核预约
+                tea->AuditReservation();
+                break;
+            case 3:
+                // 退出系统 释放堆空间
+                delete teacher;
+                teacher = nullptr;
+                cout << "Exit successfully" << endl;
+                return;
+                break;
+            default:
+                cout << "Invalid input, please try again" << endl;
+                break;
+        }
+        system("pause");
+        system("cls");
+    }
+}
+
 // 学生子界面菜单
 void StudentMenu(Identity* &student)
 {
@@ -23,22 +61,18 @@ void StudentMenu(Identity* &student)
         {
             case 1:
                 // 申请预约
-                cout << "Apply Reservation" << endl;
                 stu->ApplyReservation();
                 break;
             case 2:
                 // 查看自身预约
-                cout << "View Self Reservation" << endl;
                 stu->ViewSelfReservation();
                 break;
             case 3:
                 // 查看所有预约
-                cout << "View All Reservation" << endl;
                 stu->ViewAllReservation();
                 break;
             case 4:
                 // 取消预约
-                cout << "Cancel Reservation" << endl;
                 stu->CancelReservation();
                 break;
             case 5:
@@ -73,22 +107,18 @@ void ManagerMenu(Identity* &manager)
         {
             case 1:
                 // 添加账号
-                cout << "Add Account" << endl;
                 admin->AddAccount();
                 break;
             case 2:
                 // 查看账号
-                cout << "View Account" << endl;
                 admin->ViewAccount();
                 break;
             case 3:
                 // 查看机房
-                cout << "View Machine Room" << endl;
                 admin->ViewMachineRoom();
                 break;
             case 4:
                 // 清空预约
-                cout << "Clear Reservation" << endl;
                 admin->ClearReservation();
                 break;
             case 5:
@@ -203,7 +233,10 @@ void Login(string filename, int type)
                 if (id == file_id && name == file_name && password == file_password)
                 {
                     cout << "Teacher login successful" << endl;
+                    Identity* teacher = new Teacher(name, password, id);
                     system("pause");
+                    system("cls");
+                    TeacherMenu(teacher);
                     return;
                 }
             }
