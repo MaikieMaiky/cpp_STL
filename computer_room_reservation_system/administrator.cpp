@@ -204,6 +204,18 @@ void Administrator::ViewMachineRoom()
 // 清空预约
 void Administrator::ClearReservation()
 {
+    // 1. 打开预约文件 truncate
+    string filename = kReservationFile;
+    ofstream ofs;
+    ofs.open(filename, ios::trunc);
+    if (!ofs.is_open())
+    {
+        cout << "File open error" << endl;
+        return;
+    }
+    ofs.close();
+    cout << "Clear reservation successfully" << endl;
+    return;
 }
 
 // 初始化容器
