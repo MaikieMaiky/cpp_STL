@@ -122,13 +122,31 @@ void Student::ApplyReservation()
 // 查看自身预约
 void Student::ViewSelfReservation()
 {
-    
-    
+    for (auto& reservation : this->reservation_file_.reservations_)
+    {
+        if (reservation.second["student_id"] == to_string(id_))
+        {
+            cout << "date: " << reservation.second["date"] << " ";
+            cout << "time_slot: " << reservation.second["time_slot"];
+            cout << "room_id: " << reservation.second["room_id"] << " ";
+            cout << "student_id: " << reservation.second["student_id"] << " ";
+            cout << "student_name: " << reservation.second["student_name"] << " ";
+            cout << "status: " << reservation.second["status"] << endl;
+        }
+    }    
 }
 // 查看所有预约
 void Student::ViewAllReservation()
 {
-
+    for (auto& reservation : this->reservation_file_.reservations_)
+    {
+        cout << "date: " << reservation.second["date"] << " ";
+        cout << "time_slot: " << reservation.second["time_slot"] << " ";
+        cout << "room_id: " << reservation.second["room_id"] << " ";
+        cout << "student_id: " << reservation.second["student_id"] << " ";
+        cout << "student_name: " << reservation.second["student_name"] << " ";
+        cout << "status: " << reservation.second["status"] << endl;
+    }
 }
 
 // 取消预约

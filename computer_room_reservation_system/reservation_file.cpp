@@ -43,7 +43,7 @@ void ReservationFile::LoadReservation()
         getline(ss, room_id, ',');
         getline(ss, student_id, ',');
         getline(ss, student_name, ',');
-        getline(ss, status, ',');
+        getline(ss, status);
 
         // 2. 每一部分按照冒号分割 拿出每一部分
         string key;
@@ -85,17 +85,6 @@ void ReservationFile::LoadReservation()
         index++;
     }
     ifs.close();
-
-    // 测试
-    for (auto& reservation : reservations_)
-    {
-        cout << reservation.first << " ";
-        for (auto& [key, value] : reservation.second)
-        {
-            cout << key << ": " << value << " ";
-        }
-        cout << endl;
-    }
 }
 
 void ReservationFile::SaveReservation()
@@ -111,11 +100,12 @@ void ReservationFile::SaveReservation()
     // 2. 写入数据
     for (auto& reservation : reservations_)
     {
-        for (auto& [key, value] : reservation.second)
-        {
-            ofs << key << ":" << value << ",";
-        }
-        ofs << endl;
+        ofs << "date:" << reservation.second["date"] << ",";
+        ofs << "time_slot:" << reservation.second["time_slot"] << ",";
+        ofs << "room_id:" << reservation.second["room_id"] << ",";
+        ofs << "student_id:" << reservation.second["student_id"] << ",";
+        ofs << "student_name:" << reservation.second["student_name"] << ",";
+        ofs << "status:" << reservation.second["status"] << endl;
     }   
     ofs.close();
     return;
