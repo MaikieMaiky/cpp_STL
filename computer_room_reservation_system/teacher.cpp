@@ -9,7 +9,7 @@ void Teacher::ShowMenu()
 {
     cout << "==========================================" << endl;
     cout << "|      Teacher Menu                      |" << endl;
-    cout << "|=========================================|" << endl;
+    cout << "|========================================|" << endl;
     cout << "|      1. View All Reservations          |" << endl;
     cout << "|      2. Audit Reservation              |" << endl;
     cout << "|      3. Exit                           |" << endl;
@@ -94,8 +94,26 @@ void Teacher::AuditReservation()
         cout << "Invalid input, please try again" << endl;
         return;
     }
-    // 审核预约
-    this->reservation_file_.reservations_[reservation_map[audit_number]]["status"] = "2";
+
+    // 审核通过或者不通过
+    cout << "Please input the status" << endl;
+    cout << "1. Approved" << endl;
+    cout << "2. Rejected" << endl;
+    int status = 0;
+    cin >> status;
+    if (status < 1 || status > 2)
+    {
+        cout << "Invalid input, please try again" << endl;
+        return;
+    }
+    if (status == 1)
+    {
+        this->reservation_file_.reservations_[reservation_map[audit_number]]["status"] = "2";
+    }
+    else if (status == 2)
+    {
+        this->reservation_file_.reservations_[reservation_map[audit_number]]["status"] = "3";
+    }
     this->reservation_file_.SaveReservation();
     cout << "Audit successful" << endl;
 }
